@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europe Trip Itinerary</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1419">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f1419;color:#e2e8f0;font-family:'Inter',-apple-system,system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:600px;margin:0 auto;padding:20px 16px 40px}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr .sup{font-size:13px;color:#556677;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.hdr h1{font-size:26px;font-weight:700;margin:0}
+.hdr .sub{font-size:13px;color:#8899aa;margin-top:6px}
+.hdr .ver{font-size:11px;color:#556677;margin-top:8px}
+.day{background:#1a2029;border-radius:10px;margin-bottom:12px;border:1px solid #2a3544;overflow:hidden}
+.day-btn{width:100%;background:none;border:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left}
+.day-date{width:44px;height:44px;border-radius:8px;background:rgba(74,158,255,.13);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.day-date .m{font-size:10px;color:#4a9eff;font-weight:700;line-height:1}
+.day-date .d{font-size:16px;color:#4a9eff;font-weight:700;line-height:1.2}
+.day-info{flex:1}
+.day-title{color:#e2e8f0;font-weight:600;font-size:15px}
+.day-sub{color:#8899aa;font-size:12px;margin-top:2px}
+.day-arrow{color:#556677;font-size:12px}
+.day-body{padding:4px 16px 16px;display:none}
+.day.open .day-body{display:block}
+.seg{border-left:3px solid;padding-left:16px;margin-bottom:16px;padding-bottom:4px}
+.seg-head{display:flex;gap:8px;align-items:flex-start}
+.seg-icon{font-size:20px}
+.seg-title{font-weight:600;color:#e2e8f0;font-size:15px}
+.seg-time{font-size:13px;font-weight:600;margin-top:2px}
+.seg-detail{color:#8899aa;font-size:13px;margin-top:4px;margin-left:28px;line-height:1.5}
+.seg-booking{margin-left:28px;margin-top:6px;padding:6px 10px;border-radius:6px;font-size:12px;color:#8899aa}
+.seg-tip{margin-left:28px;margin-top:6px;padding:6px 10px;background:rgba(239,68,68,.08);border-radius:6px;font-size:12px;color:#ef4444;font-weight:500}
+.seg-links{display:flex;gap:8px;margin-left:28px;margin-top:8px;flex-wrap:wrap}
+.tkt{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(34,211,238,.13);border:1px solid rgba(34,211,238,.25);border-radius:6px;color:#22d3ee;font-size:12px;font-weight:600;text-decoration:none}
+.lnk{color:#4a9eff;text-decoration:none;font-size:13px}
+.refs-btn{width:100%;background:#1a2029;border:1px solid #2a3544;border-radius:10px;padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#e2e8f0;font-weight:600;font-size:15px;margin-top:24px}
+.refs-btn.open{border-radius:10px 10px 0 0}
+.refs-body{background:#1a2029;border:1px solid #2a3544;border-top:none;border-radius:0 0 10px 10px;padding:16px;display:none}
+.refs-body.open{display:block}
+.ref-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2a3544}
+.ref-row:last-child{border-bottom:none}
+.ref-label{font-size:13px;color:#e2e8f0;font-weight:500}
+.ref-code{font-size:12px;color:#8899aa;font-family:monospace}
+.ref-tkt{color:#22d3ee;font-size:12px;text-decoration:none;padding:4px 8px;background:rgba(34,211,238,.08);border-radius:4px}
+.foot{text-align:center;margin-top:20px;font-size:11px;color:#556677}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hdr">
+<div class="sup">JULY 6 – 21, 2026</div>
+<h1>Europe Trip</h1>
+<div class="sub">Portland → London → Amsterdam → Cologne → Stuttgart → Venice → Bovec → Athens → Naxos → Home</div>
+<div class="ver">Updated June 12, 2026 (v5)</div>
+</div>
+<div id="days"></div>
+<button class="refs-btn" id="refsBtn" onclick="toggleRefs()">All Booking References <span id="refsArrow" style="color:#556677;font-size:12px">▼</span></button>
+<div class="refs-body" id="refsBody"></div>
+<div class="foot">Buddy pickup: Gorizia Centrale, Fri Jul 10, ~11:00</div>
+</div>
+<script>
+const T={stena:"https://drive.google.com/file/d/19LlmpOiU2uS66nU4eukSiVO3_nJqI9CE/view",aegean:"https://drive.google.com/file/d/12KnWhtUfCjMQ4HKi9DF3mm-7fvoqN277/view",alaska_pdx:"https://drive.google.com/file/d/1p2QESwStmifqEx-6v1Sgp9TpyC-aDoqZ/view",alaska_lhr:"https://drive.google.com/file/d/197zta2F9GpFkwYMWAZqpCCZvKGEL6qhX/view",klm_det:"https://drive.google.com/file/d/1I5D2IF70DEudCHsdoTwDptqss2Uko9Ny/view",klm_ref:"https://drive.google.com/file/d/1neudhv9HOArrLL0Kfl1lhEdti21sdrvR/view",grp_ath:"https://drive.google.com/file/d/1UjEf83te2gBjYF1LDP_zy8l3ih9V0wj-/view",grp_nax:"https://drive.google.com/file/d/1tGZuK-BrKywjkdvQ81jxIS6HKiRbNq1X/view",hilton:"https://drive.google.com/file/d/1MmlbHY__WeZKWFE1zb0T3Ipp2NLlY8sf/view",sofitel:"https://drive.google.com/file/d/1-gIeTfthbER7bXSWg0ryGmcXdWC7mypW/view",db_ams_cgn:"https://drive.google.com/file/d/1pnLkKAID645tthd6GOiqdHVS2geFs7IE/view",db_cgn_str:"https://drive.google.com/file/d/1D63aGpBMP9ydoBMs2vxNcaaF_GBaj45w/view",nj_book:"https://drive.google.com/file/d/1_Oi2PHn1aHS2xs1p4j76z98anb1w5ruY/view",nj_pdf:"https://drive.google.com/file/d/1hrnim46JaThpd69x58MGFOFqoxWggxMh/view",bovec:"https://drive.google.com/file/d/13zAnQOX9hBZZFGQkl_fdV6b9ccIRMG1V/view"};
+const map=q=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const days=[
+{date:"JUL 6",title:"Fly to London",sub:"PDX → SEA → LHR",segs:[
+{icon:"✈️",title:"Alaska AS 2313: Portland → Seattle",time:"Mon Jul 6, 19:38 → 20:33",color:"#c084fc",details:["Seat 2A","Confirmation: MBZBCG"],tickets:[{url:T.alaska_pdx,label:"View Ticket"}],links:[{map:"Portland International Airport PDX",label:"PDX"},{href:"https://www.alaskaair.com/",label:"Alaska Airlines"}]},
+{icon:"✈️",title:"Alaska AS 100: Seattle → London Heathrow",time:"Mon Jul 6, 21:45 → Tue Jul 7, 15:05",color:"#c084fc",details:["Seat 2A","Confirmation: MBZBCG"],tickets:[{url:T.alaska_lhr,label:"View Ticket"}],links:[{map:"London Heathrow Airport",label:"LHR"}]}
+]},
+{date:"JUL 7",title:"London → Ferry",sub:"Day in London, evening train to Harwich, overnight ferry",segs:[
+{icon:"🚶",title:"Day in London",time:"Arrive 15:05 → Evening",color:"#fb923c",details:["Explore London before heading to the ferry terminal."]},
+{icon:"🚄",title:"Greater Anglia: Liverpool Street → Harwich",time:"~20:00 → ~21:15",color:"#e8913a",details:["~1h15. INCLUDED with Stena Rail & Sail ticket.","Show your Stena Line booking at the station. No separate train ticket needed."],tickets:[{url:T.stena,label:"Stena Booking (Rail & Sail)"}],links:[{map:"London Liverpool Street Station",label:"Liverpool St"},{map:"Harwich International Station",label:"Harwich"},{href:"https://www.greateranglia.co.uk/",label:"Greater Anglia"}]},
+{icon:"⛴️",title:"Stena Line: Harwich → Hook of Holland",time:"23:00 → Wed 08:00",color:"#38bdf8",details:["Stena Hollandica. Single outside cabin, Stena Plus Lounge."],booking:["Ref: 91473800","Status: BOOKED"],tips:["Check-in closes 22:15. Arrive by 22:00."],tickets:[{url:T.stena,label:"View Ticket"}],links:[{map:"Harwich International Port Stena Line",label:"Harwich Port"},{href:"https://www.stenaline.co.uk/routes/harwich-hook-of-holland",label:"Stena Line"}]}
+]},
+{date:"JUL 8",title:"Hook of Holland → Amsterdam → Cologne",sub:"Day in Amsterdam, evening train to Cologne",segs:[
+{icon:"⛴️",title:"Arrive Hook of Holland",time:"08:00",color:"#38bdf8",details:["Disembark. Metro to Rotterdam (~35 min), NS Intercity to Amsterdam (~40 min). Contactless tap in/out."],links:[{map:"Hook of Holland ferry terminal",label:"Hook of Holland"},{href:"https://www.ns.nl/en",label:"NS Dutch Rail"}]},
+{icon:"🎯",title:"Free Time in Amsterdam",time:"~10:00 – 18:00 (~8 hours)",color:"#fb923c",details:["Rijksmuseum, Anne Frank House, Jordaan, canals, Vondelpark."],links:[{map:"Rijksmuseum Amsterdam",label:"Rijksmuseum"},{map:"Amsterdam Centraal Station",label:"Amsterdam CS"}]},
+{icon:"🚄",title:"DB ICE 221: Amsterdam → Köln Hbf",time:"18:38 → 21:11 (2h33m)",color:"#e8913a",details:["1st Class. Seat: Wg. 29, Pl. 41 (Ruhebereich/quiet zone)","Platform 5b at Amsterdam Centraal"],booking:["Order: 379659297633 / Code: 0E7T6GEC","Cost: €59.99","Status: BOOKED (non-refundable)"],tips:["Jun 27–Jul 23: Aachen-Cologne diverted via Rheydt. May add 15-30 min."],tickets:[{url:T.db_ams_cgn,label:"View Ticket"}],links:[{map:"Köln Hauptbahnhof",label:"Köln Hbf"},{href:"https://int.bahn.de/en",label:"Deutsche Bahn"}]},
+{icon:"🏨",title:"Hilton Cologne",time:"Check-in Jul 8 / Check-out Jul 9",color:"#34d399",details:["Walking distance from Köln Hbf and Cathedral."],booking:["Confirmation: 3486936592","Cost: €168.84","Status: BOOKED"],tickets:[{url:T.hilton,label:"View Booking"}],links:[{map:"Hilton Cologne Germany",label:"Hotel Map"},{href:"https://www.hilton.com/en/hotels/cgnhitw-hilton-cologne/",label:"Hilton Cologne"}]}
+]},
+{date:"JUL 9",title:"Rhine Valley → Stuttgart → Night Train",sub:"🏰 Castle route, then sleeper to Venice",segs:[
+{icon:"🚄",title:"DB IC 1940: Köln Hbf → Mannheim",time:"08:53 → 11:55 (3h02m)",color:"#e8913a",details:["1st Class. Seat: Wg. 5, Pl. 125 (Ruhebereich)","Platform 7 D-G at Köln Hbf","🏰 RHINE VALLEY SCENIC ROUTE","Bonn (09:10) → Koblenz (09:42) → Mainz (10:39)","Castle & vineyard stretch: Koblenz to Mainz (~1 hour)"],tips:["SIT ON THE LEFT SIDE for Rhine river, castle, and vineyard views. Lorelei Rock is between Koblenz and Mainz."],tickets:[{url:T.db_cgn_str,label:"View Ticket"}],links:[{map:"Köln Hauptbahnhof",label:"Köln Hbf"},{map:"Mannheim Hauptbahnhof",label:"Mannheim"}]},
+{icon:"🚶",title:"Transfer at Mannheim Hbf",time:"11:55 → 12:33 (38 min)",color:"#94a3b8",details:["Platform 3 → Platform 5. Comfortable."]},
+{icon:"🚄",title:"DB ICE 595: Mannheim → Stuttgart",time:"12:33 → 13:11 (38 min)",color:"#e8913a",details:["Seat: Wg. 11, Pl. 71. Arrive Platform 16."],booking:["Order: 867765429386 / Code: 2D8Q63PU","Cost: €66.89 (combined)","Status: BOOKED (non-refundable)"],links:[{map:"Stuttgart Hauptbahnhof",label:"Stuttgart Hbf"}]},
+{icon:"🎯",title:"Free Time in Stuttgart",time:"13:11 – 20:29 (~7 hours)",color:"#fb923c",details:["Schlossplatz, Markthalle, Staatsgalerie, or grab a beer."],links:[{map:"Schlossplatz Stuttgart",label:"Schlossplatz"}]},
+{icon:"🚄",title:"ÖBB Nightjet NJ 237: Stuttgart → Venice",time:"20:29 → Fri 08:34 (12h05m)",color:"#e8913a",details:["Single mit Dusche & WC (single with shower & toilet)","Wagon 279, Bettplatz 42. Breakfast included.","Route: Stuttgart → Munich → Innsbruck → Brenner → Verona → Venice"],booking:["Ticketcode: 2275 3003 6465 2855","Booking: 0499 6377 4901 2921","Cost: €474.90","Status: BOOKED (no changes/refunds)"],tips:["Cross-border: PRINT this ticket on white A4 paper. Digital not accepted outside Austria."],tickets:[{url:T.nj_pdf,label:"View Ticket (PDF)"},{url:T.nj_book,label:"OBB Booking"}],links:[{map:"Stuttgart Hauptbahnhof",label:"Stuttgart"},{map:"Venezia Santa Lucia train station",label:"Venice"},{href:"https://www.nightjet.com/en/",label:"Nightjet"}]}
+]},
+{date:"JUL 10",title:"Venice → Bovec",sub:"Train to Gorizia, buddy pickup",segs:[
+{icon:"🚄",title:"Arrive Venezia Santa Lucia",time:"08:34",color:"#e8913a",details:["Nightjet NJ 237 arrives."],links:[{map:"Venezia Santa Lucia train station",label:"Venice Santa Lucia"}]},
+{icon:"🚄",title:"Trenitalia Regional: Venice → Gorizia",time:"~09:00 → ~11:00 (~2h)",color:"#e8913a",details:["Frequent departures. Buy day-of at station or Trenitalia app. ~€13-18."],links:[{map:"Gorizia Centrale train station Italy",label:"Gorizia"},{href:"https://www.trenitalia.com/en.html",label:"Trenitalia"}]},
+{icon:"🚗",title:"Buddy Pickup → Bovec",time:"~11:00 → ~12:30",color:"#34d399",details:["Buddy meets you at Gorizia Centrale station.","Drive to Bovec: ~1.5 hours via the Soča Valley.","Check-in isn't until 16:00. Drop bags, explore Bovec."],links:[{map:"Gorizia Centrale train station",label:"Pickup Point"},{map:"Bovec Slovenia",label:"Bovec"}]},
+{icon:"🏨",title:"Apartments Kaninska Vas",time:"Check-in Jul 10 (16:00-17:00) / Check-out Jul 13 (3 nights)",color:"#34d399",details:["Bovec, Slovenia. Booked via Booking.com."],booking:["Booking Number: 6751596333","Status: BOOKED"],tickets:[{url:T.bovec,label:"View Booking"}],links:[{map:"Apartments Kaninska Vas Bovec Slovenia",label:"Hotel Map"},{href:"https://www.booking.com/",label:"Booking.com"}]}
+]},
+{date:"JUL 11",title:"Bovec / Soča Valley",sub:"Jul 11-12: Free days",segs:[
+{icon:"☀️",title:"Free Days in Bovec",time:"Sat Jul 11 – Sun Jul 12",color:"#fb923c",details:["Soča River: rafting, kayaking, canyoning.","Hiking: Triglav National Park, Vršič Pass.","Boka Waterfall, Kluže Fortress."],links:[{map:"Soča River Bovec Slovenia",label:"Soča River"},{map:"Triglav National Park",label:"Triglav NP"},{map:"Vršič Pass Slovenia",label:"Vršič Pass"}]}
+]},
+{date:"JUL 13",title:"Bovec → Venice → Athens",sub:"Drive to VCE, fly to Athens, group arrives",segs:[
+{icon:"🚗",title:"Drive: Bovec → VCE Airport",time:"~10:00 → ~13:00 (~3h)",color:"#94a3b8",details:["Check out of Kaninska Vas. Buddy drives to Venice Marco Polo. Leave by 10:00."],links:[{map:"Venice Marco Polo Airport VCE",label:"VCE Airport"}]},
+{icon:"✈️",title:"Aegean A3671: Venice → Athens",time:"15:30 → 18:35 (2h05m)",color:"#c084fc",details:["Aegean Airlines"],booking:["Confirmation: 9D9P9M","Status: BOOKED"],tickets:[{url:T.aegean,label:"View Ticket"}],links:[{map:"Athens International Airport",label:"ATH"},{href:"https://en.aegeanair.com/",label:"Aegean Airlines"}]},
+{icon:"🏨",title:"NLH Monastiraki Hotel",time:"Check-in Jul 13 / Check-out Jul 15 (2 nights)",color:"#34d399",details:["35 Athinais, Athens, GR, 105 54","Lifestyle Suite Veranda (group booking)"],booking:["Group booking. 2 nights.","Status: BOOKED"],tickets:[{url:T.grp_ath,label:"Group Itinerary"}],links:[{map:"NLH Monastiraki Hotel Athens",label:"Hotel Map"},{href:"https://www.nlh-hotels.com/",label:"NLH Hotels"}]}
+]},
+{date:"JUL 14",title:"Athens: Acropolis Tour",sub:"Guided walking tour, afternoon free",segs:[
+{icon:"🎯",title:"Walking Acropolis Tour",time:"09:00 – ~13:00 (4h)",color:"#fb923c",details:["Meet in hotel lobby 09:00.","Theatre of Dionysus → Acropolis → Parthenon → Propylaea → New Acropolis Museum.","Entrances included."],tickets:[{url:T.grp_ath,label:"Group Itinerary"}],links:[{map:"Acropolis Athens Greece",label:"Acropolis"},{map:"Acropolis Museum Athens",label:"Museum"}]}
+]},
+{date:"JUL 15",title:"Athens → Naxos",sub:"Morning transfer to Piraeus, ferry",segs:[
+{icon:"🚐",title:"Transfer to Piraeus",time:"08:30 from hotel lobby",color:"#94a3b8",details:["Group minibus."],links:[{map:"Piraeus Port Athens Greece",label:"Piraeus"}]},
+{icon:"⛴️",title:"Ferry: Piraeus → Naxos",time:"Morning → ~13:50",color:"#38bdf8",details:["High-speed ferry. Transfer to hotel on arrival."],links:[{map:"Naxos Port Greece",label:"Naxos Port"}]},
+{icon:"🏨",title:"Liana Beach Hotel & Spa",time:"Check-in Jul 15 / Check-out Jul 19 (4 nights)",color:"#34d399",details:["Agios Prokopios, Naxos, GR, 84300","Beachfront. Rest of day at leisure."],booking:["Group booking. 4 nights.","Status: BOOKED"],tickets:[{url:T.grp_nax,label:"Group Itinerary"}],links:[{map:"Liana Beach Hotel Spa Agios Prokopios Naxos",label:"Hotel Map"},{href:"https://www.lianahotel.gr/",label:"Liana Beach"}]}
+]},
+{date:"JUL 16",title:"Naxos: Days at Leisure",sub:"Jul 16-17: Beach, Chora, explore",segs:[
+{icon:"☀️",title:"Free Days",time:"Thu Jul 16 – Fri Jul 17",color:"#fb923c",details:["Beach at Agios Prokopios and Plaka.","Explore Chora: Venetian castle, narrow streets, wine, seafood.","Optional: ATV to inland villages (Halki, Apiranthos)."],links:[{map:"Naxos Chora Greece",label:"Chora"},{map:"Plaka Beach Naxos",label:"Plaka Beach"}]}
+]},
+{date:"JUL 18",title:"Naxos: Catamaran Cruise",sub:"Full day private sailing",segs:[
+{icon:"⛵",title:"Private Catamaran Cruise",time:"09:20 – ~15:20 (6h)",color:"#38bdf8",details:["Meet in hotel lobby 09:20.","Sail Naxos coast: beaches, caves, swimming, snorkeling.","Greek lunch + drinks included."],tickets:[{url:T.grp_nax,label:"Group Itinerary"}]}
+]},
+{date:"JUL 19",title:"Group Departs / Solo TBD",sub:"Group flies to London. You stay.",segs:[
+{icon:"❌",title:"Group Departure (NOT YOU)",time:"11:30 transfer, 13:50 flight",color:"#556677",details:["Group flies Naxos → London. You do NOT fly with them."]},
+{icon:"❓",title:"Your Plan: TBD",time:"Jul 19-20",color:"#fbbf24",details:["Options:","• Stay extra night on Naxos, ferry/fly to Athens Jul 20","• Ferry to Piraeus Jul 19, extra night in Athens","• Fly JNX → ATH (~35 min, Aegean/Olympic)","Must be at Sofitel Athens Airport by evening Jul 20."],links:[{href:"https://en.aegeanair.com/",label:"Aegean (JNX-ATH)"},{href:"https://www.ferries.gr/",label:"Greek Ferries"}]}
+]},
+{date:"JUL 20",title:"Travel to Sofitel Athens Airport",sub:"Arrive by evening",segs:[
+{icon:"🏨",title:"Sofitel Athens Airport",time:"Check-in from 1:00 PM / Check-out Jul 21",color:"#34d399",details:["Athens International Airport, 19019 Athens Spata, Greece","1 night, 2 adults. Walk to terminal in the morning."],booking:["Reservation: QLFPBZLM","Cost: €362.00","Phone: (+30) 2103544000","Email: H3167@sofitel.com","Status: BOOKED"],tickets:[{url:T.sofitel,label:"View Booking"}],links:[{map:"Sofitel Athens Airport Hotel",label:"Hotel Map"},{href:"https://all.accor.com/hotel/3167/index.en.shtml",label:"Sofitel"}]}
+]},
+{date:"JUL 21",title:"Return Home",sub:"Athens → Amsterdam → Portland",segs:[
+{icon:"✈️",title:"KLM KL1952: Athens → Amsterdam",time:"06:00 → 08:30 (3h30m)",color:"#c084fc",details:["Seat 3F, Europe Business Class","Walk from Sofitel to terminal (~5 min)."],tips:["06:00 AM departure. Set multiple alarms."],tickets:[{url:T.klm_det,label:"Flight Details"},{url:T.klm_ref,label:"Booking Ref"}],links:[{map:"Athens International Airport",label:"ATH"},{href:"https://www.klm.com/",label:"KLM"}]},
+{icon:"🔄",title:"Layover at Schiphol",time:"08:30 → 10:25 (1h55m)",color:"#94a3b8",details:["Don't leave the airport."]},
+{icon:"✈️",title:"KLM KL615: Amsterdam → Portland",time:"10:25 → 11:10 (9h45m)",color:"#c084fc",details:["Seat 6K, World Business Class","Boeing 787-10. Arrive PDX same day."],booking:["Confirmation: X99RHI","Total duration: 15h10m","Status: BOOKED"],links:[{map:"Portland International Airport PDX",label:"PDX"}]}
+]}
+];
+const refs=[
+{l:"Alaska PDX→SEA→LHR",r:"MBZBCG",u:T.alaska_pdx},
+{l:"Stena Line Ferry",r:"91473800",u:T.stena},
+{l:"DB Amsterdam→Cologne",r:"379659297633",u:T.db_ams_cgn},
+{l:"Hilton Cologne",r:"3486936592",u:T.hilton},
+{l:"DB Cologne→Stuttgart",r:"867765429386",u:T.db_cgn_str},
+{l:"Nightjet NJ 237",r:"€474.90",u:T.nj_pdf},
+{l:"Aegean VCE→ATH",r:"9D9P9M",u:T.aegean},
+{l:"Kaninska Vas, Bovec",r:"6751596333",u:T.bovec},
+{l:"NLH Monastiraki",r:"Group",u:T.grp_ath},
+{l:"Liana Beach Naxos",r:"Group",u:T.grp_nax},
+{l:"Sofitel Athens Airport",r:"QLFPBZLM",u:T.sofitel},
+{l:"KLM ATH→AMS→PDX",r:"X99RHI",u:T.klm_det}
+];
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function renderSeg(s){
+const bg=s.color+'11';
+let h=`<div class="seg" style="border-color:${s.color}">`;
+h+=`<div class="seg-head"><span class="seg-icon">${s.icon||''}</span><div style="flex:1"><div class="seg-title">${esc(s.title)}</div>`;
+if(s.time)h+=`<div class="seg-time" style="color:${s.color}">${esc(s.time)}</div>`;
+h+=`</div></div>`;
+if(s.details)s.details.forEach(d=>{h+=`<div class="seg-detail">${esc(d)}</div>`});
+if(s.booking){h+=`<div class="seg-booking" style="background:${bg}">`;s.booking.forEach(b=>{h+=`<div>${esc(b)}</div>`});h+=`</div>`}
+if(s.tips)s.tips.forEach(t=>{h+=`<div class="seg-tip">⚠️ ${esc(t)}</div>`});
+if(s.tickets||s.links){
+h+=`<div class="seg-links">`;
+if(s.tickets)s.tickets.forEach(t=>{if(t.url)h+=`<a class="tkt" href="${t.url}" target="_blank">🎫 ${esc(t.label||'View Ticket')}</a>`});
+if(s.links)s.links.forEach(l=>{
+if(l.map)h+=`<a class="lnk" href="${map(l.map)}" target="_blank">📍 ${esc(l.label)}</a>`;
+else if(l.href)h+=`<a class="lnk" href="${l.href}" target="_blank">🔗 ${esc(l.label)}</a>`;
+});
+h+=`</div>`}
+h+=`</div>`;
+return h;
+}
+function renderDays(){
+const c=document.getElementById('days');
+days.forEach((day,i)=>{
+const parts=day.date.split(' ');
+const el=document.createElement('div');
+el.className='day';
+el.innerHTML=`<button class="day-btn" onclick="this.parentElement.classList.toggle('open')">
+<div class="day-date"><span class="m">${parts[0]}</span><span class="d">${parts[1]}</span></div>
+<div class="day-info"><div class="day-title">${esc(day.title)}</div>${day.sub?`<div class="day-sub">${esc(day.sub)}</div>`:''}</div>
+<span class="day-arrow">▼</span>
+</button><div class="day-body">${day.segs.map(renderSeg).join('')}</div>`;
+c.appendChild(el);
+});
+}
+function renderRefs(){
+const c=document.getElementById('refsBody');
+refs.forEach(r=>{
+c.innerHTML+=`<div class="ref-row"><div><div class="ref-label">${esc(r.l)}</div><div class="ref-code">${esc(r.r)}</div></div>${r.u?`<a class="ref-tkt" href="${r.u}" target="_blank">🎫</a>`:`<span style="font-size:12px;color:#556677">—</span>`}</div>`;
+});
+}
+function toggleRefs(){
+const b=document.getElementById('refsBody'),btn=document.getElementById('refsBtn'),a=document.getElementById('refsArrow');
+const open=b.classList.toggle('open');
+btn.classList.toggle('open',open);
+a.textContent=open?'▲':'▼';
+}
+renderDays();
+renderRefs();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
+</script>
+</body>
+</html>

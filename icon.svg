@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0f1419"/>
+  <text x="256" y="200" text-anchor="middle" font-size="120" fill="#4a9eff" font-family="sans-serif" font-weight="700">EU</text>
+  <text x="256" y="340" text-anchor="middle" font-size="80" fill="#8899aa" font-family="sans-serif" font-weight="600">2026</text>
+  <circle cx="256" cy="420" r="24" fill="#34d399"/>
+  <circle cx="180" cy="420" r="16" fill="#e8913a"/>
+  <circle cx="332" cy="420" r="16" fill="#c084fc"/>
+</svg>
