@@ -1,7 +1,8 @@
 {
   "name": "Europe Trip July 2026",
   "short_name": "Europe Trip",
-  "start_url": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f1419",
   "theme_color": "#0f1419",
